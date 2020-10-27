@@ -16,7 +16,7 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([string(credentialsId: '', variable: 'dockerhub')]) {
+                withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
                     sh 'docker login -u sanakhanlibre -p ${dockerhub}'
                 }
                 sh 'docker push sanakhanlibre/my_flask_app:latest'
