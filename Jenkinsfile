@@ -1,10 +1,6 @@
 pipeline {
     agent any
     
-    environment {
-        CREDENTIALS_ID = 'dockerhub'
-    }
-    
     stages {
         stage("Checkout code") {
             steps {
@@ -13,18 +9,14 @@ pipeline {
         }
         stage("Build image") {
             steps {
-                script {
-                    myapp = docker.build("sanakhanlibre/my_flask_app:${env.BUILD_ID}")
-                }
+                sh 'docker build -t sanakhanlibre/my_flask_app:latest .'
             }
         }
         stage("Push image") {
             steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                            myapp.push("latest")
-                            myapp.push("${env.BUILD_ID}")
-                    }
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                    sh 'docker push sanakhanlibre/my_flask_app:latest'
                 }
             }
         }
