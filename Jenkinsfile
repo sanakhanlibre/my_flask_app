@@ -10,7 +10,7 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                sh 'docker build -t sanakhanlibre/my_flask_app:latest'
+                sh 'docker build -t sanakhanlibre/my_flask_app:latest .'
             }
         }
 
