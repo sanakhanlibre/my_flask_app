@@ -2,7 +2,7 @@ node {
     stages {
         
         stage('GitHub Checkout') {
-                git credentialId: 'github', url: 'https://github.com/sanakhanlibre/my_flask_app'
+                git credentialsId: 'github', url: 'https://github.com/sanakhanlibre/my_flask_app'
         }
 
         stage('Build Docker image') {
@@ -10,8 +10,8 @@ node {
         }
 
         stage('Push Docker Image') {
-            withCredentials([string(credentialId: 'Docker_Password', variable: 'Docker_Password')]) {
-                sh 'docker login -u sanakhanlibre -p ${Docker_Password}'
+            withCredentials([string(credentialsId: '', variable: 'dockerhub')]) {
+                sh 'docker login -u sanakhanlibre -p ${dockerhub}'
             }
             sh 'docker push sanakhanlibre/my_flask_app:latest'
         }
