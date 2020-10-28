@@ -22,6 +22,15 @@ pipeline {
                 sh 'docker push sanakhanlibre/my_flask_app:latest'
             }
         }
+
+        stage('Deploy App') {
+            steps {
+                script {
+                    kubernetesDeploy(configs: "deployment.yaml", kubeconfigId: "kube_config")
+                }
+            }
+        }
+
     }
 }
 
