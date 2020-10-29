@@ -13,7 +13,7 @@ pipeline {
             }
         }
 
-        /*stage('Build Docker image') {
+        stage('Build Docker image') {
             steps {
                 sh 'docker build -t sanakhanlibre/my_flask_app:latest .'
             }
@@ -26,7 +26,7 @@ pipeline {
                 }
                 sh 'docker push sanakhanlibre/my_flask_app:latest'
             }
-        }*/
+        }
 
         stage('Deploy App') {
             steps {
