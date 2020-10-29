@@ -13,10 +13,6 @@ pipeline {
             }
         }
 
-        stage('Run Tests'){
-            echo 'Run Tests'
-        }
-
         stage('Build Docker image') {
             steps {
                 sh 'docker build -t sanakhanlibre/my_flask_app:latest .'
