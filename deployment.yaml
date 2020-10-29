@@ -27,10 +27,10 @@ metadata:
   labels:
     app: flask
 spec:
-  ports:
-  - port: 5000
-    targetPort: 5000
-    name: flask
   selector:
     app: flask
-  type: LoadBalancer
+  type: NodePort
+  ports:
+  - nodePort: 8080
+    port: 5000
+    targetPort: 5000
