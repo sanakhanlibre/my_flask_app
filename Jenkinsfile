@@ -14,13 +14,15 @@ pipeline {
         }
 
         stage('Run Tests'){
-             docker {
+            agent {
+                docker {
                     image 'python:3.7-slim' 
                 }
-            steps {
-                sh 'python --version' 
-                sh 'pip install -r requirements.txt'
-                sh 'python test/test_app.py'
+                steps {
+                    sh 'python --version' 
+                    sh 'pip install -r requirements.txt'
+                    sh 'python test/test_app.py'
+                }
             }
         }
 
