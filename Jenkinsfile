@@ -10,9 +10,6 @@ pipeline {
         stage('GitHub Checkout') {
             steps {
                 git credentialsId: 'github', url: 'https://github.com/sanakhanlibre/my_flask_app'
-                        sh 'git log HEAD^..HEAD --pretty="%h %an - %s" > GIT_CHANGES'
-                        def lastChanges = readFile('GIT_CHANGES')
-                        slackSend color: "warning", message: "Pipeline Triggered `${env.JOB_NAME}#${env.BUILD_NUMBER}`\n\n_The changes:_\n${lastChanges}"
             }
         }
 
