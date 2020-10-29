@@ -1,77 +1,63 @@
 pipeline {
     agent any
 
-    try {
+    triggers {
+        pollSCM 'H/5 * * * *'
+    }
 
-        notifyBuild('STARTED')
-
-        stages {
+    stages {
         
-            stage('GitHub Checkout') {
-                steps {
-                    git credentialsId: 'github', url: 'https://github.com/sanakhanlibre/my_flask_app'
-                    checkout scm
-                }
+        stage('GitHub Checkout') {
+            steps {
+                git credentialsId: 'github', url: 'https://github.com/sanakhanlibre/my_flask_app'
             }
+        }
 
-            /*stage('Build Docker image') {
-                steps {
-                    sh 'docker build -t sanakhanlibre/my_flask_app:latest .'
-                }
+        /*stage('Build Docker image') {
+            steps {
+                sh 'docker build -t sanakhanlibre/my_flask_app:latest .'
             }
+        }
 
-            stage('Push Docker Image') {
-                steps {
-                    withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
-                        sh 'docker login -u sanakhanlibre -p ${dockerhub}'
-                    }
-                    sh 'docker push sanakhanlibre/my_flask_app:latest'
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+                    sh 'docker login -u sanakhanlibre -p ${dockerhub}'
                 }
-            }*/
+                sh 'docker push sanakhanlibre/my_flask_app:latest'
+            }
+        }*/
 
-            stage('Deploy App') {
-                echo 'Deploying to Kubernetes'
-                steps {
-                    script {
-                        kubernetesDeploy(configs: "deployment.yaml", kubeconfigId: "kubeconfig")
-                    }
+        stage('Deploy App') {
+            steps {
+                script {
+                    kubernetesDeploy(configs: "deployment.yaml", kubeconfigId: "kubeconfig")
                 }
             }
         }
     }
-    catch (e) {
-        currentBuild.result = "FAILED"
-        throw e
+
+    post {
+        always {
+            slack_notify(currentBuild.currentResult)
+            cleanWs()
+        }
     }
-    finally {
-        notifyBuild(currentBuild.result)
-    }
 
-    def notifyBuild(String buildStatus = 'STARTED') {
 
-        buildStatus =  buildStatus ?: 'SUCCESSFUL'
-
-        def color = 'RED'
-        def colorCode = '#FF0000'
-        def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
-        def summary = "${subject} (${env.BUILD_URL})"
-        def details = """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-            <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>"""
-
-        if (buildStatus == 'STARTED') {
-            color = 'YELLOW'
-            colorCode = '#FFCC00'
-        } 
-        else if (buildStatus == 'SUCCESSFUL') {
-            color = 'GREEN'
-            colorCode = '#228B22'
-        } 
+    def slack_notify(String buildResult) {
+        if ( buildResult == "SUCCESS" ) {
+            slackSend color: "good", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was successful."
+        }
+        else if( buildResult == "FAILURE" ) { 
+            slackSend color: "danger", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} failed."
+        }
+        else if( buildResult == "UNSTABLE" ) { 
+            slackSend color: "warning", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was unstable."
+        }
         else {
-            color = 'RED'
-            colorCode = '#FF0000'
+            slackSend color: "danger", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} its resulat was unclear." 
         }
-        slackSend (color: colorCode, message: summary)
     }
 }
-
 
