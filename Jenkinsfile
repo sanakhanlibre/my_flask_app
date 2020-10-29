@@ -14,6 +14,9 @@ pipeline {
         }
 
         stage('Run Tests'){
+             docker {
+                    image 'python:3.7-slim' 
+                }
             steps {
                 sh 'python --version' 
                 sh 'pip install -r requirements.txt'
