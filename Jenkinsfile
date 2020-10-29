@@ -13,6 +13,14 @@ pipeline {
             }
         }
 
+        stage('Run Tests'){
+            steps {
+                sh 'python --version' 
+                sh 'pip install -r requirements.txt'
+                sh 'python test/test_app.py'
+            }
+        }
+
         stage('Build Docker image') {
             steps {
                 sh 'docker build -t sanakhanlibre/my_flask_app:latest .'
@@ -41,12 +49,6 @@ pipeline {
         always {
             slack_notify(currentBuild.currentResult)
             cleanWs()
-        }
-    
-        failure {
-            mail to: 'sanakhan2011@gmail.com',
-            subject: "Pipeline has failed: ${currentBuild.fullDisplayName}",
-            body: "Error in ${env.BUILD_URL}"
         }
     }
 }
