@@ -31,6 +31,6 @@ spec:
     app: flask
   type: NodePort
   ports:
-  - nodePort: 8080
+  - nodePort: 31113
     port: 5000
     targetPort: 5000
