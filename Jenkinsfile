@@ -44,12 +44,12 @@ pipeline {
             slack_notify(currentBuild.currentResult)
             cleanWs()
         }
-    }
-
-    failure {
-        mail to: 'sanakhan2011@gmail.com',
-        subject: "Pipeline has failed: ${currentBuild.fullDisplayName}",
-        body: "Error in ${env.BUILD_URL}"
+    
+        failure {
+            mail to: 'sanakhan2011@gmail.com',
+            subject: "Pipeline has failed: ${currentBuild.fullDisplayName}",
+            body: "Error in ${env.BUILD_URL}"
+        }
     }
 }
 
