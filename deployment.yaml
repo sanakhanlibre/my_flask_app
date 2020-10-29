@@ -8,7 +8,9 @@ spec:
   selector:
     matchLabels:
       app: flask
-  replicas: 2
+  replicas: 3
+  strategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
