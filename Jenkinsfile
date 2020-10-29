@@ -6,8 +6,6 @@ pipeline {
     }
 
     stages {
-        
-        slackSend color: "blue", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER}" 
 
         stage('GitHub Checkout') {
             steps {
