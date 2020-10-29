@@ -15,7 +15,7 @@ pipeline {
 
         stage('Build Docker image') {
             steps {
-                sh 'docker build -t sanakhanlibre/my_flask_app:v1 .'
+                sh 'docker build -t sanakhanlibre/my_flask_app:v2 .'
             }
         }
 
@@ -24,7 +24,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
                     sh 'docker login -u sanakhanlibre -p ${dockerhub}'
                 }
-                sh 'docker push sanakhanlibre/my_flask_app:v1'
+                sh 'docker push sanakhanlibre/my_flask_app:v2'
             }
         }
 
