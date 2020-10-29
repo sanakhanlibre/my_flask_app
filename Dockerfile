@@ -3,5 +3,5 @@ WORKDIR /app
 ADD . /app
 RUN pip install -r requirements.txt
 ENV NAME World
-EXPOSE 80
+EXPOSE 5000
 CMD ["python", "run.py"]
