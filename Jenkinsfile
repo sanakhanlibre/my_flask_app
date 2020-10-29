@@ -7,6 +7,8 @@ pipeline {
 
     stages {
         
+        slackSend color: "blue", message: "Job: ${env.JOB_NAME} with buildnumber ${env.BUILD_NUMBER} was started on branch ${env.BRANCH_NAME}" 
+
         stage('GitHub Checkout') {
             steps {
                 git credentialsId: 'github', url: 'https://github.com/sanakhanlibre/my_flask_app'
@@ -42,6 +44,12 @@ pipeline {
             slack_notify(currentBuild.currentResult)
             cleanWs()
         }
+    }
+
+    failure {
+        mail to: 'sanakhan2011@gmail.com',
+        subject: "Pipeline has failed: ${currentBuild.fullDisplayName}",
+        body: "Error in ${env.BUILD_URL}"
     }
 }
 
